@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Services\CSVService;
 
 class ImportCSV extends Command
 {
@@ -11,7 +12,7 @@ class ImportCSV extends Command
      *
      * @var string
      */
-    protected $signature = 'import:csv {$csvFilePath}';
+    protected $signature = 'import:csv {csvFilePath}';
 
     /**
      * The console command description.
@@ -27,6 +28,14 @@ class ImportCSV extends Command
      */
     public function handle()
     {
+        $path = $this->argument('csvFilePath');
+        if (!file_exists($path)) {
+            $this->error('File not found');
+        }
+
+        $csvService = new CSVService();
+        $csvService->store($path);
+        
         return Command::SUCCESS;
     }
 }
