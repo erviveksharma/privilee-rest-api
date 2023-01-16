@@ -12,8 +12,6 @@ class JSONService
         $this->jsonPath = public_path() . "/records.json";
         if (file_exists($this->jsonPath)) {
             $records = json_decode(file_get_contents($this->jsonPath));
-        } else {
-            
         }
         $this->records = collect($records);
     }
@@ -31,6 +29,10 @@ class JSONService
             $records = $this->records->filter(function ($value, $key) use ($filter) {
                 return stripos($value->name, $filter['name']) === false ? false : true;
             });
+        }
+
+        if (isset($filter['discount_percentage']) && !empty($filter['discount_percentage'])) {
+            $records = $records->where('discount_percentage', '<=', $filter['discount_percentage']);
         }
 
         return $records->sortBy('id')->values()->toArray();
